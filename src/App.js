@@ -22,6 +22,21 @@ function App() {
       item: "Item 3",
     },
   ]);
+  const [newItem, setNewItem] = useState("");
+
+  const setAndSaveItems = (newItems) => {
+    setItems(newItems);
+    localStorage.setItem("shoppinglist", JSON.stringify(newItems));
+  };
+
+  const addItem = (item) => {
+    // set id = last list item.id + 1, or 1 if list is empty
+    const id = items.length ? items[items.length - 1].id + 1 : 1;
+    const myNewItem = { id, checked: false, item };
+    const listItems = [...items, myNewItem];
+    // console.log(listItems);
+    setAndSaveItems(listItems);
+  };
 
   const handleCheck = (id) => {
     // const listItems = items.map((item) =>
@@ -36,8 +51,7 @@ function App() {
       }
       listItems.push(item);
     });
-    setItems(listItems);
-    localStorage.setItem("shoppinglist", JSON.stringify(listItems));
+    setAndSaveItems(listItems);
   };
   const handleDelete = (id) => {
     // const listItems = items.filter((item) => item.id !== id);
@@ -48,14 +62,25 @@ function App() {
         listItems.push(item);
       }
     });
-    setItems(listItems);
-    localStorage.setItem("shoppinglist", JSON.stringify(listItems));
+    setAndSaveItems(listItems);
+  };
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    if (!newItem) return;
+    // addItem
+    addItem(newItem);
+    setNewItem(""); // reset input field to placeholder
   };
 
   return (
     <div className="App">
       <Header title="Grocery List" />
-      <AddItem />
+      <AddItem
+        newItem={newItem}
+        setNewItem={setNewItem}
+        handleSubmit={handleSubmit}
+      />
       <Content
         items={items}
         handleCheck={handleCheck}
