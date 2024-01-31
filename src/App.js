@@ -1,28 +1,18 @@
 import { useState } from "react";
 import Header from "./Header";
+import SearchItem from "./SearchItem";
+import AddItem from "./AddItem";
 import Content from "./Content";
 import Footer from "./Footer";
-import AddItem from "./AddItem";
 
 function App() {
-  const [items, setItems] = useState([
-    {
-      id: 1,
-      checked: false,
-      item: "Item 1",
-    },
-    {
-      id: 2,
-      checked: false,
-      item: "Item 2",
-    },
-    {
-      id: 3,
-      checked: false,
-      item: "Item 3",
-    },
-  ]);
+  // get default state from local storage
+  // allows for restoring correct list on page reload
+  const [items, setItems] = useState(
+    JSON.parse(localStorage.getItem("shoppinglist"))
+  );
   const [newItem, setNewItem] = useState("");
+  const [search, setSearch] = useState("");
 
   const setAndSaveItems = (newItems) => {
     setItems(newItems);
@@ -81,8 +71,12 @@ function App() {
         setNewItem={setNewItem}
         handleSubmit={handleSubmit}
       />
+      <SearchItem search={search} setSearch={setSearch}></SearchItem>
       <Content
-        items={items}
+        // .filter filters the list being sent to the content component based on the search field entry
+        items={items.filter((item) =>
+          item.item.toLowerCase().includes(search.toLowerCase())
+        )}
         handleCheck={handleCheck}
         handleDelete={handleDelete}
       ></Content>
